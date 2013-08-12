@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<head>
+<script type="text/javascript"
+	src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<STYLE type="text/css">
+/* http://www.cssportal.com/css-properties/ */
+html {
+	font-size: 80%;
+}
+
+html,body {
+	/*padding-left: 3px;*/
+	font-family: Verdana;
+	background-color: white;
+	color: black;
+}
+
+input {
+	vertical-align: bottom;
+	color: black;
+	border: 1px solid grey;
+}
+
+input[type="text"],input[type="password"],input[type="submit"] {
+	margin-top: 2px;
+	width: 365px;
+}
+
+.format {
+	font-weight: bold;
+	background-color: yellow;
+}
+
+.title {
+	font-size: 42px;
+	font-family: Terminal;
+	font-weight: bold;
+	color: rgb(0, 127, 0);
+}
+.form {
+	float: left;
+}
+.qr {
+	float: left;
+	color: black;
+	border: 1px solid #007F00;
+	margin-left: 30px;
+	width: 150px;
+	height: 150px;
+}
+a:link    { color: #007F00; }  /* unvisited  */
+a:visited { color: #007F00; }  /* visited    */
+a:hover   { color: #FF00FF; }  /* mouse over */
+a:active  { color: #0000FF; }  /* selected   */ 
+
+</STYLE>
+<script type="text/javascript">
+	var postURL = "TinyURL";
+	var shortURL = $(location).attr('href') + postURL + "/";
+	var qrGen = "http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=L|1&chl=";
+	var t = {
+		request : function() {
+			$.ajax(postURL, {
+				type: 'POST',
+				data: {
+					url: $('#url').val()
+				}
+			}).done(function(response) {
+				t.update(shortURL + response.id);
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				$('#response').val('Failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
+				console.log('failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
+			});
+		},
+		update : function(url) {
+			$('#response').val(url);
+			$('.link').html('<a href="' + url + '">Link</a>');
+			$('.qr').html('<img src="' + qrGen + url + '">');
+		}
+	};
+</script>
+</head>
+<body>
+	<DIV CLASS="title">TinyURL::PUT</DIV>
+
+	<DIV CLASS="form">
+	<FORM NAME="TinyURL" METHOD="POST"
+		ENCTYPE="application/x-www-form-urlencoded"
+		onSubmit="t.request(); return false;">
+		<p>
+			Long URL:<br />
+			<INPUT TYPE="TEXT" id="url" VALUE="">
+		<p>
+			Short URL: <SPAN CLASS="link">&nbsp;</SPAN><br />
+			<INPUT TYPE="TEXT" id="response" VALUE="">
+		<p>
+			<br />
+			<INPUT TYPE="SUBMIT" VALUE="Put">
+	</FORM>
+	</DIV>
+	<DIV CLASS="qr">&nbsp;</DIV>
+
+</body>
+</html>

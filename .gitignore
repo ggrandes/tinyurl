@@ -1,5 +1,4 @@
 bin
 target
 .metadata
-.settings
 log4j.properties

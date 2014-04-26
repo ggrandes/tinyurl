@@ -74,7 +74,7 @@ public class TinyURL extends HttpServlet {
 	 * CHECK_LEVEL
 	 * 0=none, 1=URLSyntax, 2=SURBL, 3=URLConnection, 4=WhiteList
 	 */
-	private static int CHECK_LEVEL = 4; 
+	private static int CHECK_LEVEL = 4;
 	//
 	private static final Charset iso = Charset.forName("ISO-8859-1");
 	private PersistentStorage store;
@@ -256,7 +256,7 @@ public class TinyURL extends HttpServlet {
 		// http://multirbl.valli.org/list/
 		// http://www.rfc-editor.org/rfc/rfc5782.txt
 		final String TWO_LEVEL_TLDS = "http://www.surbl.org/tld/two-level-tlds";
-		final String THREE_LEVEL_TLDS = "http://www.surbl.org/tld/three-level-tlds"; 
+		final String THREE_LEVEL_TLDS = "http://www.surbl.org/tld/three-level-tlds";
 		final File storeDir;
 		final File storeLevel2;
 		final File storeLevel3;
@@ -272,7 +272,7 @@ public class TinyURL extends HttpServlet {
 			storeLevel2 = new File(storeDir, "tlds.2");
 			storeLevel3 = new File(storeDir, "tlds.3");
 		}
-		
+
 		public void load() throws IOException {
 			final long now = System.currentTimeMillis();
 			final long expire = (24 * 3600 * 1000L);
@@ -288,7 +288,7 @@ public class TinyURL extends HttpServlet {
 			loadSetFromFile(storeLevel2, set2);
 			loadSetFromFile(storeLevel3, set3);
 		}
-		
+
 		private static void loadSetFromFile(final File f, final Set<String> s) throws IOException {
 			BufferedReader reader = null;
 			try {
@@ -298,12 +298,12 @@ public class TinyURL extends HttpServlet {
 				while ((line = reader.readLine()) != null) {
 					s.add(line);
 				}
-				log.info("Loaded " + s.size() +" TLDs from " + f.getName());
+				log.info("Loaded " + s.size() + " TLDs from " + f.getName());
 			} finally {
 				reader.close();
 			}
 		}
-		
+
 		private static void getTLDS(final String inputUrl, final File cacheFile) throws IOException {
 			final URL url = new URL(inputUrl);
 			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -329,15 +329,24 @@ public class TinyURL extends HttpServlet {
 					log.info("HTTP_NOT_MODIFIED: " + inputUrl);
 				}
 			} finally {
-				try { is.close(); } catch (Throwable ign) {}
-				try { os.close(); } catch (Throwable ign) {}
-				try { conn.disconnect(); } catch (Throwable ign) {}
+				try {
+					is.close();
+				} catch (Throwable ign) {
+				}
+				try {
+					os.close();
+				} catch (Throwable ign) {
+				}
+				try {
+					conn.disconnect();
+				} catch (Throwable ign) {
+				}
 			}
 		}
-		
+
 		public boolean checkSURBL(final String host) throws UnknownHostException, MalformedURLException {
 			final InetAddress inetAddr = InetAddress.getByName(host);
-			final StringBuilder sb = new StringBuilder(host.length()+16);
+			final StringBuilder sb = new StringBuilder(host.length() + 16);
 			final StringTokenizer st = new StringTokenizer(host, ".");
 			final ArrayList<String> list = new ArrayList<String>();
 			int levels = 2;
@@ -365,16 +374,16 @@ public class TinyURL extends HttpServlet {
 						levels++;
 						continue;
 					}
-				}
-				else if (levels == 3) {
+				} else if (levels == 3) {
 					if (set3.contains(domCheck)) {
 						levels++;
 						continue;
 					}
 				}
 				try {
-					log.info("Checking SURBL(levels="+levels+"): " + domCheck);
-					if (InetAddress.getByName(sb.append(".multi.surbl.org.").toString()).getHostAddress().startsWith("127.")) {
+					log.info("Checking SURBL(levels=" + levels + "): " + domCheck);
+					if (InetAddress.getByName(sb.append(".multi.surbl.org.").toString()).getHostAddress()
+							.startsWith("127.")) {
 						log.info("SURBL checking (BANNED): " + domCheck);
 						return true;
 					}
@@ -385,17 +394,17 @@ public class TinyURL extends HttpServlet {
 			}
 			return false;
 		}
-		
+
 		private static void getHostLevel(final List<String> tokens, final int levels, final StringBuilder sb) {
 			final int count = tokens.size();
 			final int offset = count - levels;
 			for (int i = 0; i < levels; i++) {
 				sb.append(tokens.get(offset + i)).append('.');
 			}
-			sb.setLength(sb.length()-1);
+			sb.setLength(sb.length() - 1);
 		}
 	}
-	
+
 	static class PersistentStorage {
 		private static final int BUF_LEN = 0x10000;
 		private final KVStoreFactory<TokenHolder, MetaHolder> fac = new KVStoreFactory<TokenHolder, MetaHolder>(
@@ -594,11 +603,20 @@ public class TinyURL extends HttpServlet {
 			return new MetaHolder(bb.getLong(), bb.getInt());
 		}
 	}
-	
+
 	public static class SpamDomainException extends MalformedURLException {
 		private static final long serialVersionUID = 1L;
+
 		public SpamDomainException(final String msg) {
 			super(msg);
+		}
+
+		/**
+		 * Speedup creation ignoring fillIn of stack trace
+		 */
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return this;
 		}
 	}
 }

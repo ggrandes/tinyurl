@@ -9,7 +9,7 @@
 	</welcome-file-list>
 	<servlet>
 		<servlet-name>TinyURL</servlet-name>
-		<servlet-class>net.cloud.servlet.TinyURL</servlet-class>
+		<servlet-class>org.javastack.tinyurl.TinyURL</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>TinyURL</servlet-name>

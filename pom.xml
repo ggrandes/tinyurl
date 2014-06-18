@@ -1,23 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.cloud</groupId>
+
+	<groupId>org.javastack</groupId>
 	<artifactId>tinyurl</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>tinyurl</name>
+
 	<dependencies>
 		<dependency>
-			<groupId>org.kvstore</groupId>
+			<groupId>org.javastack</groupId>
 			<artifactId>kvstore</artifactId>
-			<version>0.0.16</version>
+			<version>0.0.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.packer</groupId>
+			<groupId>org.javastack</groupId>
 			<artifactId>packer</artifactId>
-			<version>0.0.11</version>
+			<version>0.0.12</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>tinyurl</finalName>
 		<plugins>

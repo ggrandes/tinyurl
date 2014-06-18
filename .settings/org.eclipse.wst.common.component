@@ -5,7 +5,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module archiveName="packer-0.0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/packer/packer">
+        <dependent-module archiveName="kvstore-0.0.16.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/kvstore/kvstore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="packer-0.0.11.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/packer/packer">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="tinyurl"/>

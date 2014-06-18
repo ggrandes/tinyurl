@@ -12,7 +12,7 @@
  * limitations under the License.
  *
  */
-package net.cloud.servlet;
+package org.javastack.tinyurl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,13 +48,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.kvstore.KVStoreFactory;
-import org.kvstore.holders.DataHolder;
-import org.kvstore.io.FileStreamStore;
-import org.kvstore.io.StringSerializer;
-import org.kvstore.structures.btree.BplusTree.InvalidDataException;
-import org.kvstore.structures.btree.BplusTreeFile;
-import org.packer.Base64;
+import org.javastack.kvstore.KVStoreFactory;
+import org.javastack.kvstore.holders.DataHolder;
+import org.javastack.kvstore.io.FileStreamStore;
+import org.javastack.kvstore.io.StringSerializer;
+import org.javastack.kvstore.structures.btree.BplusTree.InvalidDataException;
+import org.javastack.kvstore.structures.btree.BplusTreeFile;
+import org.javastack.packer.Base64;
 
 /**
  * Simple URL Shortener

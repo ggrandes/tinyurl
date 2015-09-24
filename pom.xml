@@ -5,34 +5,174 @@
 	<groupId>org.javastack</groupId>
 	<artifactId>tinyurl</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.3</version>
-	<name>tinyurl</name>
+	<version>1.0.0</version>
+	<description>Simple URL Shortener server like bit.ly or goo.gl</description>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+	<url>https://github.com/ggrandes/${project.artifactId}</url>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>ggrandes</id>
+			<name>Guillermo Grandes</name>
+			<email>guillermo.grandes@gmail.com</email>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git@github.com:ggrandes/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:git@github.com:ggrandes/${project.artifactId}.git</developerConnection>
+		<url>git@github.com:ggrandes/${project.artifactId}.git</url>
+	</scm>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.javastack</groupId>
-			<artifactId>kvstore</artifactId>
+			<artifactId>surbl</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javastack</groupId>
+			<artifactId>stringproperties</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.javastack</groupId>
+			<artifactId>kvstore</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.javastack</groupId>
 			<artifactId>packer</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.1</version>
+		</dependency>
+		<!-- Servlets -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>tinyurl</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>2.3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			<!-- Package WAR to upload to repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>maven</Built-By>
+						</manifestEntries>
+					</archive>
+					<warName>${project.artifactId}-${project.version}</warName>
+					<archiveClasses>true</archiveClasses>
+				</configuration>
+			</plugin>
+			<!-- Package Classes to JAR to upload to repo -->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+					<forceCreation>true</forceCreation>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>maven</Built-By>
+						</manifestEntries>
+					</archive>
+					<excludes>
+						<exclude>**/sandbox/*</exclude>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/*.conf</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- Package source to JAR to upload to repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifestEntries>
+									<Built-By>maven</Built-By>
+								</manifestEntries>
+							</archive>
+							<excludeResources>true</excludeResources>
+							<excludes>
+								<exclude>**/sandbox/*</exclude>
+								<exclude>**/*.properties</exclude>
+								<exclude>**/*.conf</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- GPG Signed Components for Maven Central -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<!-- Deployment Maven-S3 -->
+		<extensions>
+			<extension>
+				<groupId>org.springframework.build</groupId>
+				<artifactId>aws-maven</artifactId>
+				<version>4.4.0.RELEASE</version>
+			</extension>
+		</extensions>
 	</build>
+
+	<!-- Deployment Maven-S3 -->
+	<distributionManagement>
+		<repository>
+			<name>S3 Release Repository</name>
+			<id>maven-s3-release-repo</id>
+			<url>s3://maven-release/release</url>
+		</repository>
+		<snapshotRepository>
+			<name>S3 Snapshot Repository</name>
+			<id>maven-s3-snapshot-repo</id>
+			<url>s3://maven-snapshot/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

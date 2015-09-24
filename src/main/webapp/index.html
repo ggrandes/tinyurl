@@ -57,8 +57,9 @@ a:active  { color: #0000FF; }  /* selected   */
 
 </STYLE>
 <script type="text/javascript">
-	var postURL = "TinyURL";
-	var shortURL = $(location).attr('href') + postURL + "/";
+	var postURL = "tiny";
+	var redirURL = "r";
+	var shortURL = $(location).attr('href') + redirURL + "/";
 	var qrGen = "http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=L|1&chl=";
 	var t = {
 		request : function() {

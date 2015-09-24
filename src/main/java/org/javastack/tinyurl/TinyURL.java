@@ -95,7 +95,7 @@ public class TinyURL extends HttpServlet {
 		// WhiteList Check
 		if (checkFlags.contains(CheckType.WHITELIST)) {
 			// WhiteList File
-			final String defWhiteListFile = new File(storeDir, "whitelist.conf").getAbsolutePath();
+			final String defWhiteListFile = "file://" + new File(storeDir, "whitelist.conf").getAbsolutePath();
 			final String whiteListFile = config.get(CFG_WHITELIST, defWhiteListFile);
 			log.info("WhiteListFile: " + whiteListFile);
 			whiteList = new WhiteList(whiteListFile) //

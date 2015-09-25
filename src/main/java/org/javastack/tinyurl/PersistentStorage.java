@@ -1,18 +1,25 @@
 package org.javastack.tinyurl;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.Iterator;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.javastack.kvstore.KVStoreFactory;
 import org.javastack.kvstore.holders.DataHolder;
 import org.javastack.kvstore.io.FileStreamStore;
 import org.javastack.kvstore.io.StringSerializer;
 import org.javastack.kvstore.structures.btree.BplusTree.InvalidDataException;
+import org.javastack.kvstore.structures.btree.BplusTree.TreeEntry;
 import org.javastack.kvstore.structures.btree.BplusTreeFile;
 
-class PersistentStorage implements Persistence {
+public class PersistentStorage implements Persistence {
 	private static final Logger log = Logger.getLogger(PersistentStorage.class);
 	private static final int BUF_LEN = 0x10000;
 	private final KVStoreFactory<TokenHolder, MetaHolder> fac = new KVStoreFactory<TokenHolder, MetaHolder>(
@@ -83,18 +90,44 @@ class PersistentStorage implements Persistence {
 		final MetaHolder meta = map.get(TokenHolder.valueOf(k));
 		if (meta == null)
 			return null;
+		readExternal(meta);
+		log.info("Found meta id=" + k + " [" + meta + "]");
+		return meta;
+	}
+
+	private void readExternal(final MetaHolder meta) {
 		synchronized (rbuf) {
 			rbuf.clear();
 			stream.read(meta.offset, rbuf);
 			meta.url = StringSerializer.fromBufferToString(rbuf);
 		}
-		log.info("Found meta id=" + k + " [" + meta + "]");
-		return meta;
 	}
 
 	@Override
 	public void remove(final String k) {
 		map.remove(TokenHolder.valueOf(k));
+	}
+
+	@Override
+	public void dump(final OutputStream out) throws IOException {
+		final Charset iso = Charset.forName("ISO-8859-1");
+		final byte[] CRLF = "\r\n".getBytes(iso);
+		final Iterator<TreeEntry<TokenHolder, MetaHolder>> i = map.iterator();
+		out.write("key,url,created-unix-epoch-utc".getBytes(iso));
+		out.write(CRLF);
+		while (i.hasNext()) {
+			final TreeEntry<TokenHolder, MetaHolder> e = i.next();
+			final TokenHolder token = e.getKey();
+			final MetaHolder meta = e.getValue();
+			readExternal(meta);
+			out.write(token.token.getBytes());
+			out.write(',');
+			out.write(meta.getURL().getBytes(iso));
+			out.write(',');
+			out.write(Long.toString(meta.timestamp).getBytes(iso));
+			out.write(CRLF);
+		}
+		out.flush();
 	}
 
 	public static class TokenHolder extends DataHolder<TokenHolder> {
@@ -152,7 +185,7 @@ class PersistentStorage implements Persistence {
 
 	public static class MetaHolder extends DataHolder<MetaHolder> implements TinyData {
 		private final long offset;
-		private final int timestamp;
+		private final int timestamp; // creation
 		// Stored in Secondary Stream (pointed by offset)
 		private String url = null;
 
@@ -220,6 +253,30 @@ class PersistentStorage implements Persistence {
 		@Override
 		public String getURL() {
 			return url;
+		}
+	}
+
+	/**
+	 * Simple command line Tool
+	 */
+	public static void main(final String[] args) throws Throwable {
+		if (args.length != 1) {
+			System.out.println(PersistentStorage.class.getName() + " <directory-of-storage>");
+			System.exit(1);
+		}
+		final File dir = new File(args[0]);
+		if (!dir.isDirectory()) {
+			throw new FileNotFoundException("Directory not found: " + dir.getAbsolutePath());
+		}
+		Logger.getRootLogger().setLevel(Level.ERROR);
+		final PersistentStorage storage = new PersistentStorage(dir.getAbsolutePath());
+		final BufferedOutputStream out = new BufferedOutputStream(System.out, 4096);
+		try {
+			storage.open();
+			storage.dump(out);
+		} finally {
+			storage.close();
+			out.flush();
 		}
 	}
 }

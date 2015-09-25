@@ -2,6 +2,7 @@ package org.javastack.tinyurl;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 
 interface Persistence extends Closeable {
 	/**
@@ -41,4 +42,22 @@ interface Persistence extends Closeable {
 	 * @throws IOException
 	 */
 	public void remove(final String key) throws IOException;
+
+	/**
+	 * Dump storage in (<a href="https://tools.ietf.org/html/rfc4180#page-2">RFC-4180</a> type 3) CSV format.
+	 * <ul>
+	 * <li>coma as field separator</il>
+	 * <li>CR+LF as line separator</il>
+	 * <li>encoding US-ASCII or ISO-8859-1</li>
+	 * <li>with header with field names</li>
+	 * </ul>
+	 * <p>
+	 * <code>key header,url header[,options header,...]\r\n</code><br/>
+	 * <code>key1,url1[,options1,...]\r\n</code><br/>
+	 * <code>key2,url2[,options2,...]\r\n</code>
+	 * 
+	 * @param out
+	 * @throws IOException
+	 */
+	public void dump(final OutputStream out) throws IOException;
 }

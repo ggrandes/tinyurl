@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
@@ -95,7 +96,8 @@ public class TinyURL extends HttpServlet {
 		// WhiteList Check
 		if (checkFlags.contains(CheckType.WHITELIST)) {
 			// WhiteList File
-			final String defWhiteListFile = "file://" + new File(storeDir, "whitelist.conf").getAbsolutePath();
+			final String defWhiteListFile = "file://"
+					+ new File(storeDir, "whitelist.conf").getAbsolutePath();
 			final String whiteListFile = config.get(CFG_WHITELIST, defWhiteListFile);
 			log.info("WhiteListFile: " + whiteListFile);
 			whiteList = new WhiteList(whiteListFile) //
@@ -197,13 +199,14 @@ public class TinyURL extends HttpServlet {
 		// Check URL validity
 		try {
 			checkURL(url);
-		} catch (TinyException e) {
+		} catch (MalformedURLException e) {
 			log.error("Invalid URL: " + e);
-			sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL Parameter (" + e + ")");
+			sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL ("
+					+ e.getClass().getSimpleName() + ": " + e.getMessage() + ")");
 			return;
 		} catch (Exception e) {
 			log.error("Invalid URL: " + e, e);
-			sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL Parameter ("
+			sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL ("
 					+ e.getClass().getSimpleName() + ")");
 			return;
 		}

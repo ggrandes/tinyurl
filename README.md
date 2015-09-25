@@ -12,7 +12,6 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 
     # SystemProperty / Default value
     org.javastack.tinyurl.config=[classpath]/org.javastack.tinyurl.properties
-    #org.javastack.tinyurl.config=file://${CATALINA_BASE}/conf/org.javastack.tinyurl.properties
 
 #### Config Parameters
 
@@ -35,6 +34,29 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 ###### More examples
 
 * More examples in [sampleconf directory](https://github.com/ggrandes/tinyurl/tree/master/sampleconf/)
+
+## Running (Tomcat)
+
+* Set `CATALINA_OPTS="-Dorg.javastack.tinyurl.config=file://${CATALINA_BASE}/conf/org.javastack.tinyurl.properties"` in tomcat/bin/setenv.sh (linux)
+* Copy war file inside webapps directory with name: ROOT.war
+
+---
+
+## TODOs
+
+* MySQL backed for storage
+
+## MISC
+Current harcoded values:
+
+* Default config file (searched in classpath): org.javastack.tinyurl.properties
+* Default checks for URLs are: WHITELIST,SURBL,CONNECTION
+* Default Connection Timeout (millis): 10000
+* Default Read Timeout (millis): 30000
+* Algorithm for generate Keys from URL: MD5
+* The `KEY_SPACE` (defined in Constants.java; base64 is 6^KEY_SPACE = 46.656 keys) is: 6 characters 
+* Backend for storage is: [KVStore](https://github.com/ggrandes/kvstore/) (portable)
+
 
 ---
 Inspired in [goo.gl](https://goo.gl/), [bit.ly](https://bitly.com/) and [cort.as](http://cortas.elpais.com/), this code is Java-minimalistic version.

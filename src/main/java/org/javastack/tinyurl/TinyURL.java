@@ -16,14 +16,17 @@ package org.javastack.tinyurl;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,6 +52,7 @@ public class TinyURL extends HttpServlet {
 	private static final long serialVersionUID = 42L;
 	//
 	private static final String CFG_STORAGE = "storage.dir";
+	private static final String CFG_DUMP_KEY = "dump.key";
 	private static final String CFG_WHITELIST = "whitelist.file";
 	private static final String CFG_FLAGS = "check.flags";
 	private static final String CFG_CONN_TIMEOUT = "connection.timeout.millis";
@@ -57,6 +61,7 @@ public class TinyURL extends HttpServlet {
 	private static final String DEF_CHECKS = "WHITELIST,SURBL,CONNECTION";
 	//
 	private Config config;
+	private String dumpKey = null;
 	private Set<CheckType> checkFlags;
 	private int connectionTimeout, readTimeout;
 	private Persistence store;
@@ -87,6 +92,14 @@ public class TinyURL extends HttpServlet {
 		connectionTimeout = config.getInt(CFG_CONN_TIMEOUT, Constants.DEF_CONNECTION_TIMEOUT);
 		readTimeout = config.getInt(CFG_READ_TIMEOUT, Constants.DEF_READ_TIMEOUT);
 		log.info("Timeouts connection=" + connectionTimeout + "ms read=" + readTimeout + "ms");
+
+		// Dump Key
+		dumpKey = config.get(CFG_DUMP_KEY);
+		if (dumpKey == null) {
+			dumpKey = generateRandomKey(64);
+			log.info("Generated random dump.key=" + dumpKey);
+			writeKey(new File(storeDir, "dump.key"), dumpKey);
+		}
 
 		// Check Flags
 		checkFlags = CheckType.parseFlags(config.get(CFG_FLAGS, DEF_CHECKS));
@@ -141,8 +154,20 @@ public class TinyURL extends HttpServlet {
 
 	private void doGet0(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
-		final PrintWriter out = response.getWriter();
-		final String key = getPathInfoKey(request.getPathInfo());
+		final String pathInfo = request.getPathInfo();
+		if (dumpKey != null) {
+			if (pathInfo.startsWith("/dump/")) {
+				if (pathInfo.substring(6).equals(dumpKey)) {
+					response.setContentType("text/csv; charset=ISO-8859-1");
+					store.dump(response.getOutputStream());
+					return;
+				}
+				final PrintWriter out = response.getWriter();
+				sendError(response, out, HttpServletResponse.SC_FORBIDDEN, "Invalid Key");
+				return;
+			}
+		}
+		final String key = getPathInfoKey(pathInfo);
 		if (key != null) {
 			final TinyData meta = store.get(key);
 			if (meta != null) {
@@ -152,6 +177,7 @@ public class TinyURL extends HttpServlet {
 				return;
 			}
 		}
+		final PrintWriter out = response.getWriter();
 		sendError(response, out, HttpServletResponse.SC_NOT_FOUND, "Not Found");
 	}
 
@@ -290,6 +316,46 @@ public class TinyURL extends HttpServlet {
 			return null;
 		}
 		return pathInfo.substring(1);
+	}
+
+	private static final String generateRandomKey(final int len) throws UnsupportedEncodingException {
+		final char[] alpha = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789".toCharArray();
+		final SecureRandom r = new SecureRandom();
+		final StringBuilder sb = new StringBuilder(len);
+		final byte[] b = new byte[len];
+		r.nextBytes(b);
+		for (int i = 0; (i < b.length) && (sb.length() < len); i++) {
+			final char c = alpha[(b[i] & 0x7F) % alpha.length];
+			if (c >= '2' && c <= '9') {
+				sb.append(c);
+			} else if (c >= 'A' && c <= 'H') {
+				sb.append(c);
+			} else if (c >= 'J' && c <= 'N') {
+				sb.append(c);
+			} else if (c >= 'P' && c <= 'Z') {
+				sb.append(c);
+			} else if (c >= 'a' && c <= 'k') {
+				sb.append(c);
+			} else if (c >= 'm' && c <= 'z') {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
+
+	private static final void writeKey(final File f, final String key) throws IOException {
+		FileWriter wr = null;
+		try {
+			wr = new FileWriter(f);
+			wr.write(key);
+		} finally {
+			closeSilent(wr);
+			f.setExecutable(false, false);
+			f.setWritable(false, false);
+			f.setReadable(false, false);
+			f.setWritable(true, true);
+			f.setReadable(true, true);
+		}
 	}
 
 	private static final void closeSilent(final Closeable c) {

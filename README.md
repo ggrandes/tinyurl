@@ -2,7 +2,7 @@
 
 TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache License, Version 2.0) 
 
-### Current Stable Version is [1.0.1](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.1/tinyurl-1.0.1.war)
+### Current Stable Version is [1.0.2](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.2/tinyurl-1.0.2.war)
 
 ---
 
@@ -21,6 +21,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 	check.flags=WHITELIST,SURBL,CONNECTION
 	connection.timeout.millis=10000
 	read.timeout.millis=30000
+	dump.key=[random]
 
 * **storage.dir**: Where the files are stored.
 * **whitelist.file**: Where the whitelist file are stored.
@@ -30,6 +31,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
     * CONNECTION: Check URL host with a HTTP connection (HEAD). 
 * **connection.timeout.millis**: Connection timeout in millis.
 * **read.timeout.millis**: Read timeout in millis.
+* **dump.key**: Dump Key for export all storage in CSV.
 
 ###### More examples
 
@@ -54,7 +56,7 @@ Current harcoded values:
 * Default Connection Timeout (millis): 10000
 * Default Read Timeout (millis): 30000
 * Algorithm for generate Keys from URL: MD5
-* The `KEY_SPACE` is: 6 characters (base64 is 6bits^KS(6) = 46.656 keys max)  
+* The `KEY_SPACE` is: 6 characters (base64 is 6bits^KS(6) = 46.656 keys max)
 * Backend for storage is: [KVStore](https://github.com/ggrandes/kvstore/) (portable)
 
 

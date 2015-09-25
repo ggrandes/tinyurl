@@ -12,6 +12,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 
     # SystemProperty / Default value
     org.javastack.tinyurl.config=[classpath]/org.javastack.tinyurl.properties
+    #org.javastack.tinyurl.config=file://${CATALINA_BASE}/conf/org.javastack.tinyurl.properties
 
 #### Config Parameters
 

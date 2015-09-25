@@ -88,7 +88,7 @@ class PersistentStorage implements Persistence {
 			stream.read(meta.offset, rbuf);
 			meta.url = StringSerializer.fromBufferToString(rbuf);
 		}
-		log.info("Found meta [" + meta + "]");
+		log.info("Found meta id=" + k + " [" + meta + "]");
 		return meta;
 	}
 

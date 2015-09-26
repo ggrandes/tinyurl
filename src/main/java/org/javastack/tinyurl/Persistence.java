@@ -4,7 +4,16 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.javastack.stringproperties.StringProperties;
+
 public interface Persistence extends Closeable {
+	/**
+	 * Set configuration for Persistence
+	 * 
+	 * @param properties configuration
+	 */
+	public void configure(final StringProperties properties);
+
 	/**
 	 * Open Storage
 	 * 

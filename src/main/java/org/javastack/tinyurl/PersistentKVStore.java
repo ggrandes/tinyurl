@@ -18,6 +18,7 @@ import org.javastack.kvstore.io.StringSerializer;
 import org.javastack.kvstore.structures.btree.BplusTree.InvalidDataException;
 import org.javastack.kvstore.structures.btree.BplusTree.TreeEntry;
 import org.javastack.kvstore.structures.btree.BplusTreeFile;
+import org.javastack.stringproperties.StringProperties;
 
 public class PersistentKVStore implements Persistence {
 	private static final Logger log = Logger.getLogger(PersistentKVStore.class);
@@ -45,6 +46,10 @@ public class PersistentKVStore implements Persistence {
 		stream = new FileStreamStore(storeStream, BUF_LEN);
 		stream.setAlignBlocks(true);
 		stream.setFlushOnWrite(true);
+	}
+
+	@Override
+	public void configure(final StringProperties properties) {
 	}
 
 	@Override

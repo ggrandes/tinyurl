@@ -19,6 +19,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 	storage.dir=[webapp]/WEB-INF/storage/
 	whitelist.file=file://[storage.dir]/whitelist.conf
 	check.flags=WHITELIST,SURBL,CONNECTION
+	check.cache.millis=60000
 	connection.timeout.millis=10000
 	read.timeout.millis=30000
 	dump.key=[random]
@@ -28,7 +29,8 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 * **check.flags**: That checks are made against URLs.
     * WHITELIST: Check URL domain against whitelist file, if not found, shortener will be denied.
     * SURBL: Check URL domain against SURBL service, if found, shortener will be denied.
-    * CONNECTION: Check URL host with a HTTP connection (HEAD). 
+    * CONNECTION: Check URL with a HTTP connection (HEAD). 
+* **check.cache.millis**: Cache time for URL domain checks (WhiteList / SURBL).
 * **connection.timeout.millis**: Connection timeout in millis.
 * **read.timeout.millis**: Read timeout in millis.
 * **dump.key**: Dump Key for export all storage in CSV.
@@ -53,6 +55,7 @@ Current harcoded values:
 
 * Default config file (searched in classpath): org.javastack.tinyurl.properties
 * Default checks for URLs are: WHITELIST,SURBL,CONNECTION
+* Default checks cache (millis): 60000
 * Default Connection Timeout (millis): 10000
 * Default Read Timeout (millis): 30000
 * Algorithm for generate Keys from URL: MD5

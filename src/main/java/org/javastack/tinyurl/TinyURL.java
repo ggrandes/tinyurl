@@ -27,6 +27,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,6 +57,7 @@ public class TinyURL extends HttpServlet {
 	private static final String CFG_DUMP_KEY = "dump.key";
 	private static final String CFG_WHITELIST = "whitelist.file";
 	private static final String CFG_FLAGS = "check.flags";
+	private static final String CFG_CHECK_CACHE = "check.cache.millis";
 	private static final String CFG_CONN_TIMEOUT = "connection.timeout.millis";
 	private static final String CFG_READ_TIMEOUT = "read.timeout.millis";
 	//
@@ -63,11 +66,12 @@ public class TinyURL extends HttpServlet {
 	private Config config;
 	private String dumpKey = null;
 	private Set<CheckType> checkFlags;
-	private int connectionTimeout, readTimeout;
+	private int connectionTimeout, readTimeout, checkCacheExpire;
 	private Persistence store;
 	private Hasher hasher;
 	private SURBL surbl;
 	private WhiteList whiteList;
+	private LinkedHashMap<String, Integer> checkCache;
 
 	@Override
 	public void init() throws ServletException {
@@ -103,7 +107,8 @@ public class TinyURL extends HttpServlet {
 
 		// Check Flags
 		checkFlags = CheckType.parseFlags(config.get(CFG_FLAGS, DEF_CHECKS));
-		log.info("Check flags=" + checkFlags);
+		checkCacheExpire = (config.getInt(CFG_CHECK_CACHE, Constants.DEF_CHECK_CACHE_EXPIRE) / 1000);
+		log.info("Check flags=" + checkFlags + " cache=" + checkCacheExpire + "seconds");
 		// Message Digester
 		hasher = new Hasher();
 		// WhiteList Check
@@ -132,6 +137,17 @@ public class TinyURL extends HttpServlet {
 		} catch (IOException e) {
 			closeSilent(store);
 			throw e;
+		}
+		// Check cache
+		if (!checkFlags.isEmpty()) {
+			checkCache = new LinkedHashMap<String, Integer>() {
+				private static final long serialVersionUID = 42L;
+
+				@Override
+				protected boolean removeEldestEntry(final Map.Entry<String, Integer> eldest) {
+					return size() > 128;
+				}
+			};
 		}
 	}
 
@@ -224,8 +240,8 @@ public class TinyURL extends HttpServlet {
 		}
 		// Check URL validity
 		try {
-			checkURL(url);
-		} catch (MalformedURLException e) {
+			checkURL(new URL(url));
+		} catch (IOException e) {
 			log.error("Invalid URL: " + e);
 			sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL ("
 					+ e.getClass().getSimpleName() + ": " + e.getMessage() + ")");
@@ -241,21 +257,38 @@ public class TinyURL extends HttpServlet {
 		sendResponse(response, out, url, key, collision, true);
 	}
 
-	private final void checkURL(final String url) throws IOException {
+	private final void checkURL(final URL url) throws IOException {
 		if (checkFlags.isEmpty())
 			return;
+		final int now = (int) (System.currentTimeMillis() / 1000);
+		final Integer ts = checkCache.get(url.getHost());
+		boolean checkHost = true;
+		if (ts != null) {
+			final int cacheTs = Math.abs(ts.intValue());
+			final boolean cacheNegative = (ts.intValue() < 0);
+			if ((cacheTs + checkCacheExpire) > now) {
+				if (cacheNegative) {
+					throw new MalformedURLException("Invalid URL (Cache)");
+				} else {
+					checkHost = false; // Valid URL (Cache)
+				}
+			}
+		}
 		InputStream is = null;
 		URLConnection conn = null;
 		try {
-			final URL urlCheck = new URL(url);
-			if ((whiteList != null) && !whiteList.checkWhiteList(urlCheck.getHost())) {
-				throw new WhiteListNotFoundException("Domain not in WhiteList");
-			}
-			if ((surbl != null) && surbl.checkSURBL(urlCheck.getHost())) {
-				throw new SpamDomainException("Spam domain detected");
+			if (checkHost) {
+				if ((whiteList != null) && !whiteList.checkWhiteList(url.getHost())) {
+					checkCache.put(url.getHost(), Integer.valueOf(-now));
+					throw new WhiteListNotFoundException("Domain not in WhiteList");
+				}
+				if ((surbl != null) && surbl.checkSURBL(url.getHost())) {
+					checkCache.put(url.getHost(), Integer.valueOf(-now));
+					throw new SpamDomainException("Spam domain detected");
+				}
 			}
 			if (checkFlags.contains(CheckType.CONNECTION)) {
-				conn = urlCheck.openConnection();
+				conn = url.openConnection();
 				conn.setConnectTimeout(connectionTimeout);
 				conn.setReadTimeout(readTimeout);
 				conn.setDoOutput(false);
@@ -269,6 +302,9 @@ public class TinyURL extends HttpServlet {
 				while (is.read(buf) > 0) {
 					continue;
 				}
+			}
+			if (checkHost) {
+				checkCache.put(url.getHost(), Integer.valueOf((int) (System.currentTimeMillis() / 1000)));
 			}
 		} finally {
 			closeSilent(is);

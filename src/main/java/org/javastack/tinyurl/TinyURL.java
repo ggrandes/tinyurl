@@ -131,7 +131,7 @@ public class TinyURL extends HttpServlet {
 		}
 		// Storage
 		try {
-			store = new PersistentStorage(storeDir);
+			store = new PersistentKVStore(storeDir);
 			store.open();
 		} catch (IOException e) {
 			closeSilent(store);

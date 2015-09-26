@@ -19,8 +19,8 @@ import org.javastack.kvstore.structures.btree.BplusTree.InvalidDataException;
 import org.javastack.kvstore.structures.btree.BplusTree.TreeEntry;
 import org.javastack.kvstore.structures.btree.BplusTreeFile;
 
-public class PersistentStorage implements Persistence {
-	private static final Logger log = Logger.getLogger(PersistentStorage.class);
+public class PersistentKVStore implements Persistence {
+	private static final Logger log = Logger.getLogger(PersistentKVStore.class);
 	private static final int BUF_LEN = 0x10000;
 	private final KVStoreFactory<TokenHolder, MetaHolder> fac = new KVStoreFactory<TokenHolder, MetaHolder>(
 			TokenHolder.class, MetaHolder.class);
@@ -28,7 +28,7 @@ public class PersistentStorage implements Persistence {
 	private final FileStreamStore stream;
 	private final ByteBuffer wbuf, rbuf;
 
-	public PersistentStorage(final String storeDirName) throws InstantiationException,
+	public PersistentKVStore(final String storeDirName) throws InstantiationException,
 			IllegalAccessException, IOException {
 		final File storeDir = new File(storeDirName);
 		if (!storeDir.exists()) {
@@ -261,7 +261,7 @@ public class PersistentStorage implements Persistence {
 	 */
 	public static void main(final String[] args) throws Throwable {
 		if (args.length != 1) {
-			System.out.println(PersistentStorage.class.getName() + " <directory-of-storage>");
+			System.out.println(PersistentKVStore.class.getName() + " <directory-of-storage>");
 			System.exit(1);
 		}
 		final File dir = new File(args[0]);
@@ -269,7 +269,7 @@ public class PersistentStorage implements Persistence {
 			throw new FileNotFoundException("Directory not found: " + dir.getAbsolutePath());
 		}
 		Logger.getRootLogger().setLevel(Level.ERROR);
-		final PersistentStorage storage = new PersistentStorage(dir.getAbsolutePath());
+		final PersistentKVStore storage = new PersistentKVStore(dir.getAbsolutePath());
 		final BufferedOutputStream out = new BufferedOutputStream(System.out, 4096);
 		try {
 			storage.open();

@@ -118,7 +118,7 @@ public class PersistentKVStore implements Persistence {
 		final Charset iso = Charset.forName("ISO-8859-1");
 		final byte[] CRLF = "\r\n".getBytes(iso);
 		final Iterator<TreeEntry<TokenHolder, MetaHolder>> i = map.iterator();
-		out.write("key,url,created-unix-epoch-utc".getBytes(iso));
+		out.write("token,url,created-unix-epoch-utc".getBytes(iso));
 		out.write(CRLF);
 		while (i.hasNext()) {
 			final TreeEntry<TokenHolder, MetaHolder> e = i.next();

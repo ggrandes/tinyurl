@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 
-interface Persistence extends Closeable {
+public interface Persistence extends Closeable {
 	/**
 	 * Open Storage
 	 * 

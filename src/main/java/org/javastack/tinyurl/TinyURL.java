@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -280,11 +279,11 @@ public class TinyURL extends HttpServlet {
 			if (checkHost) {
 				if ((whiteList != null) && !whiteList.checkWhiteList(url.getHost())) {
 					checkCache.put(url.getHost(), Integer.valueOf(-now));
-					throw new WhiteListNotFoundException("Domain not in WhiteList");
+					throw new WhiteListNotFoundException("Domain not in WhiteList: " + url.getHost());
 				}
 				if ((surbl != null) && surbl.checkSURBL(url.getHost())) {
 					checkCache.put(url.getHost(), Integer.valueOf(-now));
-					throw new SpamDomainException("Spam domain detected");
+					throw new SpamDomainException("Spam domain detected: " + url.getHost());
 				}
 			}
 			if (checkFlags.contains(CheckType.CONNECTION)) {
@@ -293,9 +292,6 @@ public class TinyURL extends HttpServlet {
 				conn.setReadTimeout(readTimeout);
 				conn.setDoOutput(false);
 				conn.setUseCaches(true);
-				if (conn instanceof HttpURLConnection) {
-					((HttpURLConnection) conn).setRequestMethod("HEAD");
-				}
 				conn.connect();
 				is = conn.getInputStream();
 				byte[] buf = new byte[2048];

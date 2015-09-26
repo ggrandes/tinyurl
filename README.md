@@ -29,7 +29,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 * **check.flags**: That checks are made against URLs.
     * WHITELIST: Check URL domain against whitelist file, if not found, shortener will be denied.
     * SURBL: Check URL domain against SURBL service, if found, shortener will be denied.
-    * CONNECTION: Check URL with a HTTP connection (HEAD). 
+    * CONNECTION: Check URL with a HTTP connection (GET). 
 * **check.cache.millis**: Cache time for URL domain checks (WhiteList / SURBL).
 * **connection.timeout.millis**: Connection timeout in millis.
 * **read.timeout.millis**: Read timeout in millis.

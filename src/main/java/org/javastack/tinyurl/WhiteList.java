@@ -97,6 +97,14 @@ public class WhiteList {
 	public boolean checkWhiteList(final String domain) {
 		if ((list == null) || list.isEmpty())
 			return false;
+		// TODO: Autoreload
+		if (lastReload + 10000 < System.currentTimeMillis()) {
+			try {
+				load();
+			} catch (Exception e) {
+				log.warn("Fail to reload Whitelist: " + whiteListFile);
+			}
+		}
 		final String dd = domain.trim().toLowerCase();
 		final int len = list.size();
 		for (int i = 0; i < len; i++) {

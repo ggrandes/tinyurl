@@ -93,8 +93,8 @@ public class TinyURL extends HttpServlet {
 		final String defStoreDir = getServletContext().getRealPath("/WEB-INF/storage/");
 		final String storeDir = config.get(CFG_STORAGE, defStoreDir);
 		log.info("StoragePath: " + storeDir);
-		connectionTimeout = config.getInt(CFG_CONN_TIMEOUT, Constants.DEF_CONNECTION_TIMEOUT);
-		readTimeout = config.getInt(CFG_READ_TIMEOUT, Constants.DEF_READ_TIMEOUT);
+		connectionTimeout = Math.max(config.getInt(CFG_CONN_TIMEOUT, Constants.DEF_CONNECTION_TIMEOUT), 1000);
+		readTimeout = Math.max(config.getInt(CFG_READ_TIMEOUT, Constants.DEF_READ_TIMEOUT), 1000);
 		log.info("Timeouts connection=" + connectionTimeout + "ms read=" + readTimeout + "ms");
 
 		// Dump Key
@@ -107,7 +107,7 @@ public class TinyURL extends HttpServlet {
 
 		// Check Flags
 		checkFlags = CheckType.parseFlags(config.get(CFG_FLAGS, DEF_CHECKS));
-		checkCacheExpire = (config.getInt(CFG_CHECK_CACHE, Constants.DEF_CHECK_CACHE_EXPIRE) / 1000);
+		checkCacheExpire = (Math.max(config.getInt(CFG_CHECK_CACHE, Constants.DEF_CHECK_CACHE_EXPIRE), 1000) / 1000);
 		log.info("Check flags=" + checkFlags + " cache=" + checkCacheExpire + "seconds");
 		// Message Digester
 		hasher = new Hasher();

@@ -120,7 +120,7 @@ public class PersistentStorage implements Persistence {
 			final TokenHolder token = e.getKey();
 			final MetaHolder meta = e.getValue();
 			readExternal(meta);
-			out.write(token.token.getBytes());
+			out.write(token.token.getBytes(iso));
 			out.write(',');
 			out.write(meta.getURL().getBytes(iso));
 			out.write(',');

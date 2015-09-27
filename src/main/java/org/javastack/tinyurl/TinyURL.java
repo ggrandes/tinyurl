@@ -82,7 +82,7 @@ public class TinyURL extends HttpServlet {
 	}
 
 	private void init0() throws NoSuchAlgorithmException, InstantiationException, IllegalAccessException,
-			IOException, InvalidExpression, InvalidDataException {
+			IOException, InvalidExpression, InvalidDataException, ClassNotFoundException {
 		// Config Source
 		final String configSource = System.getProperty(Config.PROP_CONFIG, Config.DEF_CONFIG_FILE);
 		log.info("ConfigSource: " + configSource);
@@ -90,7 +90,11 @@ public class TinyURL extends HttpServlet {
 
 		// Storage Directory
 		final String defStoreDir = getServletContext().getRealPath("/WEB-INF/storage/");
-		final String storeDir = config.get(CFG_STORAGE, defStoreDir);
+		String storeDir = config.get(CFG_STORAGE);
+		if (storeDir == null) {
+			storeDir = defStoreDir;
+			config.put(CFG_STORAGE, storeDir);
+		}
 		log.info("StoragePath: " + storeDir);
 		connectionTimeout = Math.max(config.getInt(CFG_CONN_TIMEOUT, Constants.DEF_CONNECTION_TIMEOUT), 1000);
 		readTimeout = Math.max(config.getInt(CFG_READ_TIMEOUT, Constants.DEF_READ_TIMEOUT), 1000);
@@ -131,7 +135,11 @@ public class TinyURL extends HttpServlet {
 		}
 		// Storage
 		try {
-			store = new PersistentKVStore(storeDir);
+			final String defaultClass = PersistentKVStore.class.getName();
+			final Class<?> clazz = Class.forName(config.get("storage.class", defaultClass));
+			store = (Persistence) clazz.newInstance();
+			log.info("Storage class=" + clazz.getName());
+			store.configure(config.getSubview("storage"));
 			store.open();
 		} catch (IOException e) {
 			closeSilent(store);

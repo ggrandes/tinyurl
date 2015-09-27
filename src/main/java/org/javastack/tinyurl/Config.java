@@ -28,6 +28,14 @@ public class Config {
 		}
 	}
 
+	public void put(final String key, final String value) {
+		cfg.setProperty(key, value);
+	}
+
+	public StringProperties getSubview(final String prefix) {
+		return cfg.getSubView(prefix);
+	}
+
 	public String get(final String key) throws InvalidExpression {
 		return cfg.getPropertyEval(key);
 	}

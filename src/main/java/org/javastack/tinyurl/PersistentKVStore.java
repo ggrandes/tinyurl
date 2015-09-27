@@ -25,12 +25,24 @@ public class PersistentKVStore implements Persistence {
 	private static final int BUF_LEN = 0x10000;
 	private final KVStoreFactory<TokenHolder, MetaHolder> fac = new KVStoreFactory<TokenHolder, MetaHolder>(
 			TokenHolder.class, MetaHolder.class);
-	private final BplusTreeFile<TokenHolder, MetaHolder> map;
-	private final FileStreamStore stream;
 	private final ByteBuffer wbuf, rbuf;
+	private String storeDirName = System.getProperty("java.io.tmpdir", "/tmp/");
+	private BplusTreeFile<TokenHolder, MetaHolder> map = null;
+	private FileStreamStore stream = null;
 
-	public PersistentKVStore(final String storeDirName) throws InstantiationException,
-			IllegalAccessException, IOException {
+	public PersistentKVStore() {
+		wbuf = ByteBuffer.allocate(BUF_LEN);
+		rbuf = ByteBuffer.allocate(BUF_LEN);
+	}
+
+	@Override
+	public void configure(final StringProperties properties) {
+		storeDirName = properties.getProperty("dir");
+		log.info("Storage config={dir=" + this.storeDirName + "}");
+	}
+
+	@Override
+	public void open() throws IOException {
 		final File storeDir = new File(storeDirName);
 		if (!storeDir.exists()) {
 			if (!storeDir.mkdirs())
@@ -38,22 +50,18 @@ public class PersistentKVStore implements Persistence {
 		}
 		final File storeTree = new File(storeDir, "tree");
 		final File storeStream = new File(storeDir, "stream");
-		wbuf = ByteBuffer.allocate(BUF_LEN);
-		rbuf = ByteBuffer.allocate(BUF_LEN);
-		map = fac.createTreeFile(fac.createTreeOptionsDefault()
-				.set(KVStoreFactory.FILENAME, storeTree.getCanonicalPath())
-				.set(KVStoreFactory.DISABLE_POPULATE_CACHE, true));
+		try {
+			map = fac.createTreeFile(fac.createTreeOptionsDefault()
+					.set(KVStoreFactory.FILENAME, storeTree.getCanonicalPath())
+					.set(KVStoreFactory.DISABLE_POPULATE_CACHE, true));
+		} catch (IllegalAccessException e) {
+			throw new IOException(e);
+		} catch (InstantiationException e) {
+			throw new IOException(e);
+		}
 		stream = new FileStreamStore(storeStream, BUF_LEN);
 		stream.setAlignBlocks(true);
 		stream.setFlushOnWrite(true);
-	}
-
-	@Override
-	public void configure(final StringProperties properties) {
-	}
-
-	@Override
-	public void open() throws IOException {
 		try {
 			if (map.open())
 				log.info("open tree ok");
@@ -274,9 +282,12 @@ public class PersistentKVStore implements Persistence {
 			throw new FileNotFoundException("Directory not found: " + dir.getAbsolutePath());
 		}
 		Logger.getRootLogger().setLevel(Level.ERROR);
-		final PersistentKVStore storage = new PersistentKVStore(dir.getAbsolutePath());
+		final PersistentKVStore storage = new PersistentKVStore();
 		final BufferedOutputStream out = new BufferedOutputStream(System.out, 4096);
+		final StringProperties conf = new StringProperties();
+		conf.setProperty("dir", dir.getAbsolutePath());
 		try {
+			storage.configure(conf);
 			storage.open();
 			storage.dump(out);
 		} finally {

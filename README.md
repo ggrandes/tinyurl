@@ -43,11 +43,13 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 * **connection.timeout.millis**: Connection timeout in millis.
 * **read.timeout.millis**: Read timeout in millis.
 * **dump.key**: Dump Key for export all storage in CSV.
-* **storage.url**: URL for MySQL persistence 
-* **storage.username**: username for MySQL persistence
-* **storage.password**: password for MySQL persistence
-* **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
-
+* **storage.class**: Class used for persistence:
+    * `org.javastack.tinyurl.PersistentKVStore`: KVStore persistence (default, portable)
+    * `org.javastack.tinyurl.jdbc.PersistentMySQL`: MySQL persistence
+        * **storage.url**: URL for jdbc connection
+        * **storage.username**: username
+        * **storage.password**: password
+        * **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
 
 ###### More examples
 

@@ -2,7 +2,7 @@
 
 TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache License, Version 2.0) 
 
-### Current Stable Version is [1.0.2](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.2/tinyurl-1.0.2.war)
+### Current Stable Version is [1.0.3](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.3/tinyurl-1.0.3.war)
 
 ---
 
@@ -23,8 +23,17 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 	connection.timeout.millis=10000
 	read.timeout.millis=30000
 	dump.key=[random]
+	#
+	# Default KVStore Persistence
+	storage.class=org.javastack.tinyurl.PersistentKVStore
+	#
+	# Optional MySQL Persistence (default: not enabled)
+	storage.class=org.javastack.tinyurl.jdbc.PersistentMySQL
+	storage.url=jdbc:mysql://localhost:3306/tinyurl
+	storage.username=tinyurl
+	storage.password=tinyurl
 
-* **storage.dir**: Where the files are stored.
+* **storage.dir**: Where the local files are stored.
 * **whitelist.file**: Where the whitelist file are stored.
 * **check.flags**: That checks are made against URLs.
     * WHITELIST: Check URL domain against whitelist file, if not found, shortener will be denied.
@@ -34,6 +43,11 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 * **connection.timeout.millis**: Connection timeout in millis.
 * **read.timeout.millis**: Read timeout in millis.
 * **dump.key**: Dump Key for export all storage in CSV.
+* **storage.url**: URL for MySQL persistence 
+* **storage.username**: username for MySQL persistence
+* **storage.password**: password for MySQL persistence
+* **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
+
 
 ###### More examples
 
@@ -43,12 +57,11 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 
 * Set `CATALINA_OPTS="-Dorg.javastack.tinyurl.config=file://${CATALINA_BASE}/conf/org.javastack.tinyurl.properties"` in tomcat/bin/setenv.sh (linux)
 * Copy war file inside webapps directory with name: ROOT.war
+* For MySQL persistence: 
+    * Copy [mysql-connector-java-X.X.XX.jar](http://search.maven.org/#search|gav|1|g%3A"mysql"%20AND%20a%3A"mysql-connector-java") in tomcat/lib/
+    * Create MySQL user With: `GRANT ALL ON tinyurl.* TO 'tinyurl'@'%' IDENTIFIED BY 'secret';`
 
 ---
-
-## TODOs
-
-* MySQL backed for storage
 
 ## MISC
 Current harcoded values:
@@ -60,7 +73,7 @@ Current harcoded values:
 * Default Read Timeout (millis): 30000
 * Algorithm for generate Keys from URL: MD5
 * The `KEY_SPACE` is: 6 characters (base64 is 6bits^KS(6) = 46.656 keys max)
-* Backend for storage is: [KVStore](https://github.com/ggrandes/kvstore/) (portable)
+* Default Backend for storage is: [KVStore](https://github.com/ggrandes/kvstore/) (portable)
 
 
 ---

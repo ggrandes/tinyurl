@@ -20,7 +20,7 @@ public class PersistentMySQL implements Persistence {
 	private static final Logger log = Logger.getLogger(PersistentMySQL.class);
 	private static final String table = "mapping";
 	private static final String TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + table + " (" + //
-			"token BINARY(22)," + //
+			"token VARCHAR(22) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL," + //
 			"url VARCHAR(65000) NOT NULL," + //
 			"timestamp INT(11) unsigned NOT NULL," + //
 			"PRIMARY KEY (token)" + //
@@ -104,6 +104,7 @@ public class PersistentMySQL implements Persistence {
 				return new TinyData() {
 					@Override
 					public String getURL() {
+						System.out.println("key=" + key + " url=" + url);
 						return url;
 					}
 				};

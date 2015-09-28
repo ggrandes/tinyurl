@@ -104,7 +104,6 @@ public class PersistentMySQL implements Persistence {
 				return new TinyData() {
 					@Override
 					public String getURL() {
-						System.out.println("key=" + key + " url=" + url);
 						return url;
 					}
 				};

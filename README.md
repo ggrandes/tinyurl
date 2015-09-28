@@ -66,7 +66,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 ---
 
 ## MISC
-Current harcoded values:
+Current hardcoded values:
 
 * Default config file (searched in classpath): org.javastack.tinyurl.properties
 * Default checks for URLs are: WHITELIST,CONNECTION

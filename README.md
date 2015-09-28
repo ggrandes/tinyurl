@@ -69,7 +69,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 Current harcoded values:
 
 * Default config file (searched in classpath): org.javastack.tinyurl.properties
-* Default checks for URLs are: WHITELIST,SURBL,CONNECTION
+* Default checks for URLs are: WHITELIST,CONNECTION
 * Default checks cache (millis): 60000
 * Default Connection Timeout (millis): 10000
 * Default Read Timeout (millis): 30000

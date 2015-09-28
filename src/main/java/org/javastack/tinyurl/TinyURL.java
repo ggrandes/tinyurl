@@ -60,7 +60,7 @@ public class TinyURL extends HttpServlet {
 	private static final String CFG_CONN_TIMEOUT = "connection.timeout.millis";
 	private static final String CFG_READ_TIMEOUT = "read.timeout.millis";
 	//
-	private static final String DEF_CHECKS = "WHITELIST,SURBL,CONNECTION";
+	private static final String DEF_CHECKS = "WHITELIST,CONNECTION";
 	//
 	private Config config;
 	private String dumpKey = null;

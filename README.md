@@ -18,7 +18,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
     # Parameter / Default value
 	storage.dir=[webapp]/WEB-INF/storage/
 	whitelist.file=file://[storage.dir]/whitelist.conf
-	check.flags=WHITELIST,SURBL,CONNECTION
+	check.flags=WHITELIST,CONNECTION
 	check.cache.millis=60000
 	connection.timeout.millis=10000
 	read.timeout.millis=30000

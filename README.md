@@ -31,7 +31,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 	storage.class=org.javastack.tinyurl.jdbc.PersistentMySQL
 	storage.url=jdbc:mysql://localhost:3306/tinyurl
 	storage.username=tinyurl
-	storage.password=tinyurl
+	storage.password=secret
 
 * **storage.dir**: Where the local files are stored.
 * **whitelist.file**: Where the whitelist file are stored.

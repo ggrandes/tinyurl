@@ -74,7 +74,7 @@ Current harcoded values:
 * Default Connection Timeout (millis): 10000
 * Default Read Timeout (millis): 30000
 * Algorithm for generate Keys from URL: MD5
-* The `KEY_SPACE` is: 6 characters (base64 is 6bits^KS(6) = 46.656 keys max)
+* The `KEY_SPACE` is: 6 characters (base64 is 64^KS(6) = 68.719.476.736 keys max)
 * Default Backend for storage is: [KVStore](https://github.com/ggrandes/kvstore/) (portable)
 
 

@@ -101,7 +101,7 @@ a:active  { color: #0000FF; }  /* selected   */
 		},
 		update : function(id) {
 			var shorted = baseURL + redirTiny + "/" + id;
-			var qrImg = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chld=H|1&chl=" + id; // deprecated
+			var qrImg = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chld=H|1&chl=" + shorted; // deprecated
 			$('#response').val(shorted);
 			$('.link').html('<a href="' + shorted + '">Link</a>');
 			$('.qr').html('<img src="' + qrImg + '">');

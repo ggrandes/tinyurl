@@ -2,7 +2,7 @@
 
 TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache License, Version 2.0) 
 
-### Current Stable Version is [1.0.4](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.4/tinyurl-1.0.4.war)
+### Current Stable Version is [1.0.5](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.5/tinyurl-1.0.5.war)
 
 ---
 

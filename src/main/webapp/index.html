@@ -2,8 +2,7 @@
 <html>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 <head>
-<script type="text/javascript"
-	src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- SRI Hash Generator: www.srihash.org -->
 <STYLE type="text/css">
 /* http://www.cssportal.com/css-properties/ */
 html {
@@ -56,32 +55,6 @@ a:hover   { color: #FF00FF; }  /* mouse over */
 a:active  { color: #0000FF; }  /* selected   */ 
 
 </STYLE>
-<script type="text/javascript">
-	var postURL = "tiny";
-	var redirURL = "r";
-	var shortURL = $(location).attr('href') + redirURL + "/";
-	var qrGen = "http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=L|1&chl=";
-	var t = {
-		request : function() {
-			$.ajax(postURL, {
-				type: 'POST',
-				data: {
-					url: $('#url').val()
-				}
-			}).done(function(response) {
-				t.update(shortURL + response.id);
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				$('#response').val('Failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
-				console.log('failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
-			});
-		},
-		update : function(url) {
-			$('#response').val(url);
-			$('.link').html('<a href="' + url + '">Link</a>');
-			$('.qr').html('<img src="' + qrGen + url + '">');
-		}
-	};
-</script>
 </head>
 <body>
 	<DIV CLASS="title">TinyURL::PUT</DIV>
@@ -103,5 +76,37 @@ a:active  { color: #0000FF; }  /* selected   */
 	</DIV>
 	<DIV CLASS="qr">&nbsp;</DIV>
 
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="//code.jquery.com/jquery-3.5.0.min.js" integrity="sha384-LVoNJ6yst/aLxKvxwp6s2GAabqPczfWh6xzm38S/YtjUyZ+3aTKOnD/OJVGYLZDl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	var postTiny = "tiny";
+	var redirTiny = "r";
+	var baseURL = $(location).attr('href');
+	var t = {
+		request : function() {
+			$.ajax(postTiny, {
+				type: 'POST',
+				data: {
+					url: $('#url').val()
+				}
+			}).done(function(response) {
+				t.update(response.id);
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				$('#response').val('Failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
+				console.log('failed: ' + textStatus + " " + jqXHR.status + ": " + jqXHR.responseText);
+			});
+		},
+		update : function(id) {
+			var shorted = baseURL + redirTiny + "/" + id;
+			var qrImg = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chld=H|1&chl=" + id; // deprecated
+			$('#response').val(shorted);
+			$('.link').html('<a href="' + shorted + '">Link</a>');
+			$('.qr').html('<img src="' + qrImg + '">');
+		}
+	};
+</script>
 </body>
 </html>

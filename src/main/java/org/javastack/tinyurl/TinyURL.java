@@ -268,7 +268,10 @@ public class TinyURL extends HttpServlet {
 		if (checkFlags.isEmpty())
 			return;
 		final int now = (int) (System.currentTimeMillis() / 1000);
-		final Integer ts = checkCache.get(url.getHost());
+		final Integer ts;
+		synchronized (checkCache) {
+			ts = checkCache.get(url.getHost());
+		}
 		boolean checkHost = true;
 		if (ts != null) {
 			final int cacheTs = Math.abs(ts.intValue());
@@ -286,11 +289,15 @@ public class TinyURL extends HttpServlet {
 		try {
 			if (checkHost) {
 				if ((whiteList != null) && !whiteList.checkWhiteList(url.getHost())) {
-					checkCache.put(url.getHost(), Integer.valueOf(-now));
+					synchronized (checkCache) {
+						checkCache.put(url.getHost(), Integer.valueOf(-now));
+					}
 					throw new WhiteListNotFoundException("Domain not in WhiteList: " + url.getHost());
 				}
 				if ((surbl != null) && surbl.checkSURBL(url.getHost())) {
-					checkCache.put(url.getHost(), Integer.valueOf(-now));
+					synchronized (checkCache) {
+						checkCache.put(url.getHost(), Integer.valueOf(-now));
+					}
 					throw new SpamDomainException("Spam domain detected: " + url.getHost());
 				}
 			}
@@ -308,7 +315,9 @@ public class TinyURL extends HttpServlet {
 				}
 			}
 			if (checkHost) {
-				checkCache.put(url.getHost(), Integer.valueOf((int) (System.currentTimeMillis() / 1000)));
+				synchronized (checkCache) {
+					checkCache.put(url.getHost(), Integer.valueOf((int) (System.currentTimeMillis() / 1000)));
+				}
 			}
 		} finally {
 			closeSilent(is);

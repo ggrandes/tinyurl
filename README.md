@@ -32,6 +32,12 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 	storage.url=jdbc:mysql://localhost:3306/tinyurl
 	storage.username=tinyurl
 	storage.password=secret
+	#
+	# QR Codes
+	#base.url=https://tiny.javastack.org/r/
+	#qr.size.min=50
+	#qr.size.max=1000
+	#qr.size.default=300
 
 * **storage.dir**: Where the local files are stored.
 * **whitelist.file**: Where the whitelist file are stored.
@@ -50,6 +56,11 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
         * **storage.username**: username
         * **storage.password**: password
         * **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
+* **base.url**: Base URL of TinyURL redirector (by default try to discover from request) `example: https://tiny.javastack.org/r/`
+* **qr.size.min**: Min size allowed in QR (pixels, square), default=50
+* **qr.size.max**: Max size allowed in QR (pixels, square), default=1000
+* **qr.size.default**: Default size in QR (pixels, square), default=300
+
 
 ###### More examples
 

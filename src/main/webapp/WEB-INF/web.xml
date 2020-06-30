@@ -20,4 +20,14 @@
 		<servlet-name>TinyURL</servlet-name>
 		<url-pattern>/r/*</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>TinyQR</servlet-name>
+		<servlet-class>org.javastack.tinyurl.TinyQR</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TinyQR</servlet-name>
+		<url-pattern>/q/*</url-pattern>
+	</servlet-mapping>
 </web-app>

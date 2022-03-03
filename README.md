@@ -76,6 +76,56 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
     * Copy [mysql-connector-java-X.X.XX.jar](http://search.maven.org/#search|gav|1|g%3A"mysql"%20AND%20a%3A"mysql-connector-java") in tomcat/lib/
     * Create MySQL user With: `GRANT ALL ON tinyurl.* TO 'tinyurl'@'%' IDENTIFIED BY 'secret';`
 
+## API Usage
+
+The API for shortening is very simple:
+
+#### To shorten a URL:
+
+    # Method: POST
+    # Path: /tiny
+    # Content-Type: application/x-www-form-urlencoded
+    # Parameter: "url=${longURLencoded}"
+    # Example: curl -i -d "url=https%3A%2F%2Fgithub.com%2Fggrandes%2Ftinyurl%2F" ${BASE_URL}/tiny
+
+Return something like this:
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json;charset=ISO-8859-1
+    Content-Length: 19
+    Cache-control: must-revalidate, max-age=0
+    
+    { "id": "iN8diz" }
+
+#### To retrieve the QR image of short URL:
+
+    # Method: GET
+    # Path: /q/{id}
+    # Example: curl -i ${BASE_URL}/q/iN8diz
+
+Return something like this:
+
+    HTTP/1.1 200 OK
+    Cache-Control: public
+    Content-Type: image/png
+    Content-Length: 475
+    
+    .PNG...binary-data...
+
+#### To retrieve the original/long URL:
+
+    # Method: GET
+    # Path: /r/{id}
+    # Example: curl -i ${BASE_URL}/r/iN8diz
+
+Return something like this:
+
+    HTTP/1.1 302 Found
+    Location: https://github.com/ggrandes/tinyurl/
+    Content-Length: 0
+    Cache-control: must-revalidate, max-age=0
+
+
 ---
 
 ## MISC

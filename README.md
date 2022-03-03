@@ -13,31 +13,33 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
     # SystemProperty / Default value
     org.javastack.tinyurl.config=[classpath]/org.javastack.tinyurl.properties
 
+###### Note: If file isn't in classpath, use URL format like ```file:///etc/tinyurl/org.javastack.tinyurl.properties``` or ```https://config-server/tinyurl/org.javastack.tinyurl.properties```
+
 #### Config Parameters
 
     # Parameter / Default value
-	storage.dir=[webapp]/WEB-INF/storage/
-	whitelist.file=file://[storage.dir]/whitelist.conf
-	check.flags=WHITELIST,CONNECTION
-	check.cache.millis=60000
-	connection.timeout.millis=10000
-	read.timeout.millis=30000
-	dump.key=[random]
-	#
-	# Default KVStore Persistence
-	storage.class=org.javastack.tinyurl.PersistentKVStore
-	#
-	# Optional MySQL Persistence (default: not enabled)
-	storage.class=org.javastack.tinyurl.jdbc.PersistentMySQL
-	storage.url=jdbc:mysql://localhost:3306/tinyurl
-	storage.username=tinyurl
-	storage.password=secret
-	#
-	# QR Codes
-	#base.url=https://tiny.javastack.org/r/
-	#qr.size.min=50
-	#qr.size.max=1000
-	#qr.size.default=300
+    storage.dir=[webapp]/WEB-INF/storage/
+    whitelist.file=file://[storage.dir]/whitelist.conf
+    check.flags=WHITELIST,CONNECTION
+    check.cache.millis=60000
+    connection.timeout.millis=10000
+    read.timeout.millis=30000
+    dump.key=[random]
+    #
+    # Default KVStore Persistence
+    storage.class=org.javastack.tinyurl.PersistentKVStore
+    #
+    # Optional MySQL Persistence (default: not enabled)
+    #storage.class=org.javastack.tinyurl.jdbc.PersistentMySQL
+    #storage.url=jdbc:mysql://localhost:3306/tinyurl
+    #storage.username=tinyurl
+    #storage.password=secret
+    #
+    # QR Codes
+    #base.url=https://tiny.javastack.org/r/
+    #qr.size.min=50
+    #qr.size.max=1000
+    #qr.size.default=300
 
 * **storage.dir**: Where the local files are stored.
 * **whitelist.file**: Where the whitelist file are stored.

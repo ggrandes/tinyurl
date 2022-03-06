@@ -43,8 +43,10 @@ public class WhiteList {
 		BufferedReader in = null;
 		try {
 			is = loadFile(whiteListFile);
-			if (is == null)
+			if (is == null) {
+				this.lastReload = System.currentTimeMillis();
 				return false;
+			}
 			in = new BufferedReader(new InputStreamReader(is));
 			String line = null;
 			final ArrayList<String> list = new ArrayList<String>();
@@ -95,14 +97,18 @@ public class WhiteList {
 	}
 
 	public boolean checkWhiteList(final String domain) {
-		if ((list == null) || list.isEmpty())
+		if ((list != null) && list.isEmpty()) {
 			return false;
+		}
 		if ((lastReload + Constants.DEF_WHITELIST_RELOAD) < System.currentTimeMillis()) {
 			try {
 				load();
 			} catch (Exception e) {
 				log.warn("Fail to reload Whitelist: " + whiteListFile);
 			}
+		}
+		if ((list == null) || list.isEmpty()) {
+			return false;
 		}
 		final String dd = domain.trim().toLowerCase();
 		final int len = list.size();

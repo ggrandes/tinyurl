@@ -16,6 +16,7 @@ package org.javastack.tinyurl;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +96,17 @@ public class TinyURL extends HttpServlet {
 			storeDir = defStoreDir;
 			config.put(CFG_STORAGE, storeDir);
 		}
-		log.info("StoragePath: " + storeDir);
+		if (storeDir != null) {
+			final File dir = new File(storeDir).getAbsoluteFile();
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			if (!dir.exists()) {
+				log.error("StoragePath (NOT_FOUND): " + dir);
+				throw new FileNotFoundException(CFG_STORAGE + " not found: " + dir);
+			}
+			log.info("StoragePath: " + dir);
+		}
 		connectionTimeout = Math.max(config.getInt(CFG_CONN_TIMEOUT, Constants.DEF_CONNECTION_TIMEOUT), 1000);
 		readTimeout = Math.max(config.getInt(CFG_READ_TIMEOUT, Constants.DEF_READ_TIMEOUT), 1000);
 		log.info("Timeouts connection=" + connectionTimeout + "ms read=" + readTimeout + "ms");

@@ -8,8 +8,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory;
 
 /**
  * Helper Factory for instanciate DBCP Pooled DataSources
@@ -19,7 +17,7 @@ public class DataSourceFactory {
 
 	/**
 	 * Return default properties
-	 * <a href="https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#How_to_use">tomcat dbcp</a>
+	 * <a href="https://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html#How_to_use">tomcat dbcp</a>
 	 */
 	public static Properties defaultProperties() {
 		final Properties prop = new Properties();
@@ -28,10 +26,9 @@ public class DataSourceFactory {
 		// prop.setProperty("username", "sa");
 		// prop.setProperty("password", "");
 		prop.setProperty("maxActive", "1");
+		prop.setProperty("minIdle", "0");
 		prop.setProperty("maxIdle", "1");
 		prop.setProperty("initialSize", "1");
-		prop.setProperty("poolPreparedStatements", "true");
-		prop.setProperty("maxOpenPreparedStatements", "10");
 		prop.setProperty("testOnBorrow", "true");
 		prop.setProperty("validationQuery", "SELECT 1 FROM DUAL");
 		prop.setProperty("removeAbandoned", "true");
@@ -52,7 +49,7 @@ public class DataSourceFactory {
 	 * @see {@link #destroyDataSource(DataSource)}
 	 */
 	public static DataSource createDataSource(final Properties prop) throws Exception {
-		return BasicDataSourceFactory.createDataSource(prop);
+		return new org.apache.tomcat.jdbc.pool.DataSourceFactory().createDataSource(prop);
 	}
 
 	/**
@@ -73,7 +70,7 @@ public class DataSourceFactory {
 	public static void destroyDataSource(final DataSource dataSource) {
 		if (dataSource != null) {
 			try {
-				((BasicDataSource) dataSource).close();
+				((org.apache.tomcat.jdbc.pool.DataSource) dataSource).close();
 			} catch (Exception e) {
 				log.error("Unable to destroyDataSource(" + dataSource + "): " + e.toString(), e);
 			}

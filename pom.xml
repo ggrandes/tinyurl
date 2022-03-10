@@ -5,11 +5,11 @@
 	<groupId>org.javastack</groupId>
 	<artifactId>tinyurl</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	<description>Simple URL Shortener server like bit.ly or goo.gl</description>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/ggrandes/${project.artifactId}</url>
+	<url>https://github.com/ggrandes/tinyurl</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -52,13 +52,13 @@
 		<dependency>
 			<groupId>org.javastack</groupId>
 			<artifactId>packer</artifactId>
-			<version>1.1.1</version>
+			<version>1.1.2</version>
 		</dependency>
 		<!-- QRCodes -->
 		<dependency>
 			<groupId>org.javastack</groupId>
 			<artifactId>qrcode-gen</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 		<!-- Log4J 1.2 replacement -->
 		<dependency>
@@ -83,8 +83,8 @@
 		<!-- DBCP Pool Included in Tomcat -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-dbcp</artifactId>
-			<version>7.0.109</version>
+			<artifactId>tomcat-jdbc</artifactId>
+			<version>8.5.76</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

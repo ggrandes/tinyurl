@@ -2,7 +2,7 @@
 
 TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache License, Version 2.0) 
 
-### Current Stable Version is [1.0.6](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.6/tinyurl-1.0.6.war)
+### Current Stable Version is [1.0.7](https://maven-release.s3.amazonaws.com/release/org/javastack/tinyurl/1.0.7/tinyurl-1.0.7.war)
 
 ---
 
@@ -57,7 +57,7 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
         * **storage.url**: URL for jdbc connection
         * **storage.username**: username
         * **storage.password**: password
-        * **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
+        * **storage.XXX**: see extra [parameters](https://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html#Common_Attributes), all prefixed with **storage.**
 * **base.url**: Base URL of TinyURL redirector (by default try to discover from request) `example: https://tiny.javastack.org/r/`
 * **qr.size.min**: Min size allowed in QR (pixels, square), default=50
 * **qr.size.max**: Max size allowed in QR (pixels, square), default=1000
@@ -75,6 +75,8 @@ TinyURL is a Simple URL Shortener build on Java. Project is Open source (Apache 
 * For MySQL persistence: 
     * Copy [mysql-connector-java-X.X.XX.jar](http://search.maven.org/#search|gav|1|g%3A"mysql"%20AND%20a%3A"mysql-connector-java") in tomcat/lib/
     * Create MySQL user With: `GRANT ALL ON tinyurl.* TO 'tinyurl'@'%' IDENTIFIED BY 'secret';`
+
+###### * Which version of mysql-connector/j we need? [versions](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-versions.html)
 
 ## API Usage
 

@@ -5,7 +5,7 @@
 	<groupId>org.javastack</groupId>
 	<artifactId>tinyurl</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 	<description>Simple URL Shortener server like bit.ly or goo.gl</description>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -30,7 +30,7 @@
 	</scm>
 
 	<properties>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
 	</properties>
 
 	<dependencies>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>ch.qos.reload4j</groupId>
 			<artifactId>reload4j</artifactId>
-			<version>1.2.19</version>
+			<version>1.2.25</version>
 		</dependency>
 		<!-- Servlets -->
 		<dependency>
@@ -75,16 +75,22 @@
 		</dependency>
 		<!-- MySQL -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.28</version>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.2.0</version>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- JDBC Pool Included in Tomcat -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
-			<version>8.5.76</version>
+			<version>8.5.100</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
